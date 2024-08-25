@@ -1,4 +1,8 @@
-fn main() {
+use esp_idf_svc::hal::delay::FreeRtos;
+use esp_idf_svc::hal::gpio::PinDriver;
+use esp_idf_svc::hal::peripherals::Peripherals;
+
+fn main() -> anyhow::Result<()> {
     // It is necessary to call this function once. Otherwise some patches to the runtime
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_svc::sys::link_patches();
@@ -7,4 +11,17 @@ fn main() {
     esp_idf_svc::log::EspLogger::initialize_default();
 
     log::info!("Hello, world!");
+
+    let peripherals = Peripherals::take().unwrap();
+
+    let mut led = PinDriver::output(peripherals.pins.gpio4)?;
+
+    loop {
+        led.set_high()?;
+        // we are sleeping here to make sure the watchdog isn't triggered
+        FreeRtos::delay_ms(1000);
+
+        led.set_low()?;
+        FreeRtos::delay_ms(1000);
+    }
 }
