@@ -12,3 +12,4 @@
 - [awesome-esp-rust](https://github.com/esp-rs/awesome-esp-rust)
 - [The Embedded Rust Book](https://docs.rust-embedded.org/book/index.html)
 - [The Embedonomicon](https://docs.rust-embedded.org/embedonomicon/)
+- [esp-idf](https://github.com/espressif/esp-idf)
