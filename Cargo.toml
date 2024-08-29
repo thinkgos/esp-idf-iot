@@ -1,40 +1,41 @@
-[package]
-name = "esp-idf-iot"
-version = "0.1.0"
-authors = ["thinkgos <thinkgo@aliyun.com>"]
-edition = "2021"
+[workspace]
 resolver = "2"
-rust-version = "1.77"
+members = [
+    "esp32s3-idf",
+    "lib/*",
+]
 
-[[bin]]
-name = "esp-idf-iot"
-harness = false # do not use the built in cargo test harness -> resolve rust-analyzer errors
+default-members = ["esp32s3-idf"]
 
-[profile.release]
-opt-level = "s"
+[workspace.package]
+version = "0.1.0"
+authors = ["thinkgo <thinkgo@aliyun.com>"]
+edition = "2021"
+rust-version = "1.80"
+description = "iot"
+keywords = [    
+    "iot"
+]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/thinkgos/esp32s3-iot-rs"
+repository = "https://github.com/thinkgos/esp32s3-iot-rs"
 
-[profile.dev]
+[workspace.dependencies]
+anyhow = "1.0"
+serde = {version = "1", features = ["derive"]}
+serde_json = "1"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+# unused = "allow" # for experimental dev
+
+[profile.dev.package."*"]
 debug = true    # Symbols are nice and they don't increase the size on Flash
 opt-level = "z"
 
-[features]
-default = ["std", "embassy", "esp-idf-svc/native"]
-
-pio = ["esp-idf-svc/pio"]
-std = ["alloc", "esp-idf-svc/binstart", "esp-idf-svc/std"]
-alloc = ["esp-idf-svc/alloc"]
-nightly = ["esp-idf-svc/nightly"]
-experimental = ["esp-idf-svc/experimental"]
-embassy = ["esp-idf-svc/embassy-sync", "esp-idf-svc/critical-section", "esp-idf-svc/embassy-time-driver"]
-
-[dependencies]
-log = { version = "0.4", default-features = false }
-esp-idf-svc = { version = "0.49", default-features = false }
-anyhow = "1"
-toml-cfg    = "0.2.0"
-rgb-led     = { path = "./common/lib/rgb-led" }
-wifi        = { path = "./common/lib/wifi" }
-
-[build-dependencies]
-embuild = "0.32.0"
-toml-cfg = "0.2.0"
+[profile.release]
+opt-level = "z"
+strip = true
+lto = true
+codegen-units = 1

@@ -1,4 +1,4 @@
-partition_table = "partitions.csv"
+partition_table = "partition-table/nvs_phy_app.csv"
 baudrate = 921600
 [connection]
 

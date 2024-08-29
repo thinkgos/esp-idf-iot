@@ -1,4 +1,12 @@
-# esp-idf-iot
+# esp32-iot-rs
+
+## 项目结构
+
+```shell
+|- esp32s3-idf          --> 项目
+|- lib                  --> 本地库
+|- partition-table      --> 分区表
+```
 
 ## wokwi
 
