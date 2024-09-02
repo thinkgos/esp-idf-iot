@@ -1,6 +1,10 @@
-use anyhow::{bail, Result};
-use esp_idf_svc::eventloop::EspSystemEventLoop;
+use anyhow::bail;
 use esp_idf_svc::hal::prelude::Peripherals;
+use esp_idf_svc::http::server::Configuration;
+use esp_idf_svc::http::Method;
+use esp_idf_svc::io::EspIOError;
+use esp_idf_svc::log::EspLogger;
+use esp_idf_svc::{eventloop::EspSystemEventLoop, http::server::EspHttpServer};
 use rgb_led::{RGB8, WS2812RMT};
 use wifi::wifi;
 
@@ -21,9 +25,9 @@ pub struct Config {
 ///
 /// If the LED goes solid red, then it was unable to connect to your Wi-Fi
 /// network.
-fn main() -> Result<()> {
+fn main() -> anyhow::Result<()> {
     esp_idf_svc::sys::link_patches();
-    esp_idf_svc::log::EspLogger::initialize_default();
+    EspLogger::initialize_default();
 
     let peripherals = Peripherals::take().unwrap();
     let sysloop = EspSystemEventLoop::take()?;
@@ -50,6 +54,14 @@ fn main() -> Result<()> {
             bail!("Could not connect to Wi-Fi network: {:?}", err)
         }
     };
+
+    let mut http_server = EspHttpServer::new(&Configuration::default())?;
+
+    http_server.fn_handler("/wifi", Method::Get, |req| -> Result<(), EspIOError> {
+        let mut resp = req.into_ok_response()?;
+        resp.write("hello".as_bytes())?;
+        Ok(())
+    })?;
 
     loop {
         log::info!("Hello, world!");
